@@ -18,30 +18,37 @@ fun TaskListScreen(
     onAddClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    when (uiState) {
-        TaskListUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = onAddClick) {
+                Text("+")
             }
         }
+    ) { padding ->
+        when (uiState) {
+            TaskListUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
 
-        is TaskListUiState.Success -> {
-            val tasks =
-                (uiState as TaskListUiState.Success).tasks
-            TaskList(tasks)
-        }
+            is TaskListUiState.Success -> {
+                val tasks =
+                    (uiState as TaskListUiState.Success).tasks
+                TaskList(tasks)
+            }
 
-        is TaskListUiState.Error -> {
-            val message =
-                (uiState as TaskListUiState.Error).message
-            Text(
-                text = message,
-                modifier = Modifier.padding(16.dp)
-            )
+            is TaskListUiState.Error -> {
+                val message =
+                    (uiState as TaskListUiState.Error).message
+                Text(
+                    text = message,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
     }
 }

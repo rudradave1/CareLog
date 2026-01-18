@@ -16,14 +16,17 @@ class ReminderWorker(
         // later: notification
         return Result.success()
     }
-    fun scheduleReminder(context: Context) {
-        val request =
-            OneTimeWorkRequestBuilder<ReminderWorker>()
-                .setInitialDelay(1, TimeUnit.DAYS)
-                .build()
 
-        WorkManager.getInstance(context)
-            .enqueue(request)
+    companion object {
+        fun schedule(context: Context) {
+            val request =
+                OneTimeWorkRequestBuilder<ReminderWorker>()
+                    .setInitialDelay(1, TimeUnit.DAYS)
+                    .build()
+
+            WorkManager
+                .getInstance(context)
+                .enqueue(request)
+        }
     }
-
 }

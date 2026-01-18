@@ -37,40 +37,25 @@ class AddTaskViewModel(
             _uiState.value =
                 current.copy(isSaving = true)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                repository.saveTask(
-                    Task(
-                        id = UUID.randomUUID(),
-                        title = current.title,
-                        category = TaskCategory.PERSONAL,
-                        frequency = TaskFrequency.Daily,
-                        startDate = LocalDate.now(),
-                        reminderTime = null,
-                        lastCompletedAt = null,
-                        isActive = true,
-                        updatedAt = System.currentTimeMillis()
-                    )
+            repository.saveTask(
+                Task(
+                    id = UUID.randomUUID(),
+                    title = current.title,
+                    category = TaskCategory.PERSONAL,
+                    frequency = TaskFrequency.Daily,
+                    startDate = LocalDate.now(),
+                    reminderTime = null,
+                    lastCompletedAt = null,
+                    isActive = true,
+                    updatedAt = System.currentTimeMillis()
                 )
-            } else {
-                //todo add  for older versions
-                /*repository.saveTask(
-                    Task(
-                        id = UUID.randomUUID(),
-                        title = current.title,
-                        category = TaskCategory.PERSONAL,
-                        frequency = TaskFrequency.Daily,
-                        startDate = LocalDate.now(),
-                        reminderTime = null,
-                        lastCompletedAt = null,
-                        isActive = true,
-                        updatedAt = System.currentTimeMillis()
-                    )
-                )*/
-            }
-            //todo ReminderWorker.scheduleReminder(getApplication())
+            )
 
             _uiState.value =
-                current.copy(isSaving = false)
+                current.copy(
+                    isSaving = false,
+                    taskSaved = true
+                )
         }
     }
 }
