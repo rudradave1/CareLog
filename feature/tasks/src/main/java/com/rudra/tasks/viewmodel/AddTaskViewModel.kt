@@ -67,6 +67,7 @@ class AddTaskViewModel(
                     )
                 )*/
             }
+            //todo ReminderWorker.scheduleReminder(getApplication())
 
             _uiState.value =
                 current.copy(isSaving = false)

@@ -6,14 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rudra.carelog.CareLogApp
-import com.rudra.carelog.feature.tasks.ui.AddTaskScreen
-import com.rudra.carelog.feature.tasks.ui.TaskListScreen
-import com.rudra.carelog.feature.tasks.viewmodel.AddTaskViewModel
-import com.rudra.carelog.feature.tasks.viewmodel.AddTaskViewModelFactory
-import com.rudra.carelog.feature.tasks.viewmodel.TaskListViewModel
-import com.rudra.carelog.feature.tasks.viewmodel.TaskListViewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import com.rudra.tasks.ui.AddTaskScreen
+import com.rudra.tasks.ui.TaskListScreen
+import com.rudra.tasks.viewmodel.AddTaskViewModel
+import com.rudra.tasks.viewmodel.AddTaskViewModelFactory
+import com.rudra.tasks.viewmodel.TaskListViewModel
+import com.rudra.tasks.viewmodel.TaskListViewModelFactory
 
 @Composable
 fun AppNavHost(

@@ -14,7 +14,8 @@ import com.rudra.tasks.viewmodel.TaskListViewModel
 
 @Composable
 fun TaskListScreen(
-    viewModel: TaskListViewModel
+    viewModel: TaskListViewModel,
+    onAddClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

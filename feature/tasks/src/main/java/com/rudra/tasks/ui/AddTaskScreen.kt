@@ -9,7 +9,8 @@ import com.rudra.tasks.viewmodel.AddTaskViewModel
 
 @Composable
 fun AddTaskScreen(
-    viewModel: AddTaskViewModel
+    viewModel: AddTaskViewModel,
+    onTaskSaved: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -28,7 +29,7 @@ fun AddTaskScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = viewModel::saveTask,
+            onClick = onTaskSaved,
             enabled = !uiState.isSaving
         ) {
             Text("Save")
