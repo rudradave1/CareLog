@@ -43,5 +43,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":core:notifications"))
     implementation("androidx.work:work-runtime-ktx:2.9.1")
+    implementation(libs.androidx.datastore.preferences)
 
 }
