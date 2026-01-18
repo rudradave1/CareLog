@@ -1,6 +1,7 @@
 package com.rudra.tasks.state
 
-import com.rudra.carelog.core.database.domain.model.Task
+import com.rudra.domain.Task
+
 
 sealed interface TaskListUiState {
     data object Loading : TaskListUiState

@@ -8,7 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rudra.carelog.core.database.domain.model.Task
+import com.rudra.domain.Task
 import com.rudra.tasks.state.TaskListUiState
 import com.rudra.tasks.viewmodel.TaskListViewModel
 
