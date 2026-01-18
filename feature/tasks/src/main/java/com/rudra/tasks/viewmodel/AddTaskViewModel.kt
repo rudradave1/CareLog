@@ -2,10 +2,10 @@ package com.rudra.tasks.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rudra.carelog.core.database.domain.enums.TaskCategory
-import com.rudra.carelog.core.database.domain.enums.TaskFrequency
-import com.rudra.carelog.core.database.domain.model.Task
 import com.rudra.carelog.core.database.repository.TaskRepository
+import com.rudra.domain.Task
+import com.rudra.domain.TaskCategory
+import com.rudra.domain.TaskFrequency
 import com.rudra.tasks.state.AddTaskUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,9 +36,11 @@ class AddTaskViewModel(
             _uiState.value =
                 current.copy(isSaving = true)
 
+            val taskId = UUID.randomUUID().toString()
+
             repository.saveTask(
                 Task(
-                    id = UUID.randomUUID(),
+                    id = UUID.fromString(taskId),
                     title = current.title,
                     category = TaskCategory.PERSONAL,
                     frequency = TaskFrequency.Daily,
@@ -53,8 +55,10 @@ class AddTaskViewModel(
             _uiState.value =
                 current.copy(
                     isSaving = false,
-                    taskSaved = true
+                    taskSaved = true,
+                    savedTaskId = taskId
                 )
         }
     }
+
 }

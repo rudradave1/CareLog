@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.rudra.common.worker.ReminderWorker
+import com.rudra.common.worker.scheduleReminder
 import com.rudra.tasks.viewmodel.AddTaskViewModel
 
 @Composable
@@ -18,12 +19,18 @@ fun AddTaskScreen(
     val context = LocalContext.current
 
     LaunchedEffect(uiState.taskSaved) {
-        if (uiState.taskSaved) {
-        //reminder worker got no access here
-            ReminderWorker.schedule(context)
+        val taskId = uiState.savedTaskId
+
+        if (uiState.taskSaved && taskId != null) {
+            scheduleReminder(
+                context = context,
+                taskId = taskId,
+                title = uiState.title
+            )
             onTaskSaved()
         }
     }
+
 
     Column(
         modifier = Modifier
@@ -42,7 +49,6 @@ fun AddTaskScreen(
         Button(
             onClick = {
                 viewModel.saveTask()
-                onTaskSaved()
             },
             enabled = !uiState.isSaving
         ) {
@@ -50,3 +56,4 @@ fun AddTaskScreen(
         }
     }
 }
+
