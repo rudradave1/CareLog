@@ -62,6 +62,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:notifications"))
     implementation(project(":feature:tasks"))
     implementation(project(":feature:settings"))
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")

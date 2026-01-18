@@ -30,3 +30,4 @@ include(
     ":feature:tasks",
     ":feature:settings"
 )
+include(":core:domain")

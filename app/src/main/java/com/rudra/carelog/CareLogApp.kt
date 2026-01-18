@@ -2,6 +2,7 @@ package com.rudra.carelog
 
 import android.app.Application
 import com.rudra.carelog.di.AppContainer
+import com.rudra.notifications.NotificationChannels
 
 class CareLogApp : Application() {
 
@@ -10,6 +11,7 @@ class CareLogApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        NotificationChannels.create(this)
         appContainer = AppContainer(this)
     }
 }

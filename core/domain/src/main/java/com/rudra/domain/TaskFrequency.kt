@@ -1,4 +1,4 @@
-package com.rudra.carelog.core.database.domain.enums
+package com.rudra.domain
 
 sealed class TaskFrequency {
     data object Daily : TaskFrequency()

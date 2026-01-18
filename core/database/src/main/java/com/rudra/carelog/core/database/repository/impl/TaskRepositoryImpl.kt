@@ -1,10 +1,10 @@
 package com.rudra.carelog.core.database.repository.impl
 
 import com.rudra.carelog.core.database.dao.TaskDao
-import com.rudra.carelog.core.database.domain.model.Task
 import com.rudra.carelog.core.database.mapper.toDomain
 import com.rudra.carelog.core.database.mapper.toEntity
 import com.rudra.carelog.core.database.repository.TaskRepository
+import com.rudra.domain.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.UUID

@@ -1,10 +1,10 @@
 package com.rudra.carelog.core.database.mapper
 
 
-import com.rudra.carelog.core.database.domain.enums.TaskCategory
-import com.rudra.carelog.core.database.domain.enums.TaskFrequency
-import com.rudra.carelog.core.database.domain.model.Task
 import com.rudra.carelog.core.database.entity.TaskEntity
+import com.rudra.domain.Task
+import com.rudra.domain.TaskCategory
+import com.rudra.domain.TaskFrequency
 import java.time.LocalDate
 import java.time.LocalTime
 
