@@ -2,10 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 
-    // ADD THESE
-    alias(libs.plugins.hilt)
     // ✅ Correct kapt usage
     id("org.jetbrains.kotlin.kapt")
+    // ✅ REQUIRED for Kotlin 2.0 + Compose
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -66,8 +66,5 @@ dependencies {
     implementation(project(":feature:tasks"))
     implementation(project(":feature:settings"))
 
-    // Hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
 
 }
