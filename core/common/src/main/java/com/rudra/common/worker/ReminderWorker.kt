@@ -30,6 +30,12 @@ class ReminderWorker(
         const val KEY_TASK_TITLE = "task_title"
     }
 }
+fun cancelAllReminders(
+    context: Context
+) {
+    WorkManager.getInstance(context)
+        .cancelAllWorkByTag("task_reminder")
+}
 
 fun scheduleReminder(
     context: Context,

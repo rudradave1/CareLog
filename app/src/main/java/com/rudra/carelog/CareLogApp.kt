@@ -2,7 +2,11 @@ package com.rudra.carelog
 
 import android.app.Application
 import com.rudra.carelog.di.AppContainer
+import com.rudra.common.worker.cancelAllReminders
 import com.rudra.notifications.NotificationChannels
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CareLogApp : Application() {
 
@@ -11,7 +15,21 @@ class CareLogApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        NotificationChannels.create(this)
+
         appContainer = AppContainer(this)
+
+        observeReminderPreference()
+    }
+
+    private fun observeReminderPreference() {
+        CoroutineScope(Dispatchers.Default).launch {
+            appContainer.userPreferences
+                .remindersEnabled
+                .collect { enabled ->
+                    if (!enabled) {
+                        cancelAllReminders(this@CareLogApp)
+                    }
+                }
+        }
     }
 }

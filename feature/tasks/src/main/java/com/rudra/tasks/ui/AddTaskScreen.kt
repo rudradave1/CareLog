@@ -20,6 +20,7 @@ import com.rudra.tasks.viewmodel.AddTaskViewModel
 @Composable
 fun AddTaskScreen(
     viewModel: AddTaskViewModel,
+    remindersEnabled: Boolean,
     onTaskSaved: () -> Unit
 ) {
     val uiState by viewModel.uiState
@@ -29,22 +30,25 @@ fun AddTaskScreen(
 
     LaunchedEffect(uiState.savedTaskId) {
         val taskId = uiState.savedTaskId
-        if (taskId != null) {
+
+        if (taskId != null && remindersEnabled) {
             scheduleReminder(
                 context = context,
                 taskId = taskId,
                 title = uiState.title
             )
+        }
+
+        if (taskId != null) {
             onTaskSaved()
             viewModel.onTaskConsumed()
         }
     }
 
     CareLogScaffold(title = "Add Task") {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             CareLogTextField(
                 value = uiState.title,
                 label = "Task title",
