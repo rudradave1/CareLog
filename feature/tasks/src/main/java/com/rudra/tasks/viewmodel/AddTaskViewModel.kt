@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.UUID
-
 private const val KEY_TITLE = "add_task_title"
+
 class AddTaskViewModel(
     private val repository: TaskRepository,
     private val savedStateHandle: SavedStateHandle
@@ -27,6 +27,9 @@ class AddTaskViewModel(
                 title = savedStateHandle[KEY_TITLE] ?: ""
             )
         )
+
+    val uiState: StateFlow<AddTaskUiState> =
+        _uiState.asStateFlow()
 
     fun onTitleChange(newTitle: String) {
         savedStateHandle[KEY_TITLE] = newTitle
@@ -67,8 +70,14 @@ class AddTaskViewModel(
                 )
 
             savedStateHandle.remove<String>(KEY_TITLE)
-
         }
     }
 
+    fun onTaskConsumed() {
+        _uiState.value =
+            _uiState.value.copy(
+                taskSaved = false,
+                savedTaskId = null
+            )
+    }
 }
