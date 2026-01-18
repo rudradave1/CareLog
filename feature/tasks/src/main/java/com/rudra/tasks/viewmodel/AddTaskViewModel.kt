@@ -1,5 +1,6 @@
 package com.rudra.tasks.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rudra.carelog.core.database.repository.TaskRepository
@@ -14,16 +15,22 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.UUID
 
+private const val KEY_TITLE = "add_task_title"
 class AddTaskViewModel(
-    private val repository: TaskRepository
+    private val repository: TaskRepository,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState =
-        MutableStateFlow(AddTaskUiState())
-    val uiState: StateFlow<AddTaskUiState> =
-        _uiState.asStateFlow()
+        MutableStateFlow(
+            AddTaskUiState(
+                title = savedStateHandle[KEY_TITLE] ?: ""
+            )
+        )
 
     fun onTitleChange(newTitle: String) {
+        savedStateHandle[KEY_TITLE] = newTitle
+
         _uiState.value =
             _uiState.value.copy(title = newTitle)
     }
@@ -58,6 +65,9 @@ class AddTaskViewModel(
                     taskSaved = true,
                     savedTaskId = taskId
                 )
+
+            savedStateHandle.remove<String>(KEY_TITLE)
+
         }
     }
 

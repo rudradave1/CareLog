@@ -1,5 +1,6 @@
 package com.rudra.tasks.viewmodel
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.rudra.carelog.core.database.repository.TaskRepository
@@ -16,7 +17,10 @@ class AddTaskViewModelFactory(
             )
         ) {
             @Suppress("UNCHECKED_CAST")
-            return AddTaskViewModel(repository) as T
+            return AddTaskViewModel(
+                repository = repository,
+                savedStateHandle = SavedStateHandle()
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel")
     }
