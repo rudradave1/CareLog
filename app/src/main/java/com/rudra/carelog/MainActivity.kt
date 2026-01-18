@@ -9,39 +9,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.rudra.carelog.data.RepositoryProvider
 import com.rudra.carelog.ui.theme.CareLogTheme
+import com.rudra.tasks.ui.TaskListScreen
+import com.rudra.tasks.viewmodel.TaskListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
         setContent {
             CareLogTheme {
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                Greeting()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun Greeting( ) {
+    val context = LocalContext.current
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CareLogTheme {
-        Greeting("Android")
-    }
+    val repository =
+        RepositoryProvider.provideTaskRepository(context)
+
+    val viewModel =
+        remember {
+            TaskListViewModel(repository)
+        }
+
+    TaskListScreen(viewModel)
+
 }
