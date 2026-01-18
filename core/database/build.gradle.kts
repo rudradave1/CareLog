@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     // ✅ REQUIRED for Kotlin 2.0 + Compose
     alias(libs.plugins.kotlin.compose)
+    // ✅ Correct kapt usage
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -30,6 +32,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -46,4 +49,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+
+// Annotation processor (Room)
+    kapt(libs.androidx.room.compiler)
+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
 }
