@@ -8,6 +8,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.rudra.designsystem.components.EmptyState
+import com.rudra.designsystem.components.LoadingState
+import com.rudra.designsystem.components.TaskCard
+import com.rudra.designsystem.theme.CareLogScaffold
 import com.rudra.domain.Task
 import com.rudra.tasks.state.TaskListUiState
 import com.rudra.tasks.viewmodel.TaskListViewModel
@@ -17,56 +22,54 @@ fun TaskListScreen(
     viewModel: TaskListViewModel,
     onAddClick: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = onAddClick) {
-                Text("+")
-            }
-        }
-    ) { padding ->
+    val uiState by viewModel.uiState
+        .collectAsStateWithLifecycle()
+
+    CareLogScaffold(title = "Your Tasks") {
+
         when (uiState) {
             TaskListUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                LoadingState()
+            }
+
+            is TaskListUiState.Error -> {
+                EmptyState(
+                    message =
+                        (uiState as TaskListUiState.Error).message
+                )
             }
 
             is TaskListUiState.Success -> {
                 val tasks =
                     (uiState as TaskListUiState.Success).tasks
-                TaskList(tasks)
-            }
 
-            is TaskListUiState.Error -> {
-                val message =
-                    (uiState as TaskListUiState.Error).message
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(16.dp)
-                )
+                if (tasks.isEmpty()) {
+                    EmptyState(
+                        message = "No tasks yet"
+                    )
+                } else {
+                    TaskList(tasks)
+                }
             }
         }
     }
 }
+
 
 @Composable
-private fun TaskList(
+fun TaskList(
     tasks: List<Task>
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
-    ) {
+    LazyColumn {
         items(tasks) { task ->
-            TaskItem(task)
-            Spacer(modifier = Modifier.height(8.dp))
+            TaskCard(
+                title = task.title,
+                subtitle = task.category.name
+            )
         }
     }
 }
+
 
 @Composable
 private fun TaskItem(task: Task) {

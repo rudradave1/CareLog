@@ -8,11 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CareLogScaffold(
     title: String,
+    floatingActionButton: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
@@ -20,15 +20,18 @@ fun CareLogScaffold(
             TopAppBar(
                 title = { Text(title) }
             )
+        },
+        floatingActionButton = {
+            floatingActionButton?.invoke()
         }
     ) { padding ->
         Box(
-            modifier =
-                Modifier
-                    .padding(padding)
-                    .padding(Spacing.md)
+            modifier = Modifier
+                .padding(padding)
+                .padding(Spacing.md)
         ) {
             content()
         }
     }
 }
+
