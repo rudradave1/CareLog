@@ -13,6 +13,9 @@ import com.rudra.carelog.CareLogApp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 import com.rudra.designsystem.theme.CareLogScaffold
+import com.rudra.settings.ui.SettingsScreen
+import com.rudra.settings.viewmodel.SettingsViewModel
+import com.rudra.settings.viewmodel.SettingsViewModelFactory
 import com.rudra.tasks.ui.AddTaskScreen
 import com.rudra.tasks.ui.TaskListScreen
 import com.rudra.tasks.viewmodel.AddTaskViewModel
@@ -77,6 +80,21 @@ fun AppNavHost(
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable(Routes.SETTINGS) {
+            val vm: SettingsViewModel =
+                viewModel(
+                    factory = SettingsViewModelFactory(
+                        appContainer.userPreferences
+                    )
+                )
+
+            CareLogScaffold(
+                title = "Settings"
+            ) {
+                SettingsScreen(viewModel = vm)
+            }
         }
     }
 }
