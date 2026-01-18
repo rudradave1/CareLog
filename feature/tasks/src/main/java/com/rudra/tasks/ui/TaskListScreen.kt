@@ -19,41 +19,35 @@ import com.rudra.tasks.viewmodel.TaskListViewModel
 
 @Composable
 fun TaskListScreen(
-    viewModel: TaskListViewModel,
-    onAddClick: () -> Unit
+    viewModel: TaskListViewModel
 ) {
-    val uiState by viewModel.uiState
-        .collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
-    CareLogScaffold(title = "Your Tasks") {
-
-        when (uiState) {
-            TaskListUiState.Loading -> {
-                LoadingState()
+    when (uiState) {
+        TaskListUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
+        }
 
-            is TaskListUiState.Error -> {
-                EmptyState(
-                    message =
-                        (uiState as TaskListUiState.Error).message
-                )
-            }
+        is TaskListUiState.Success -> {
+            TaskList(
+                tasks = (uiState as TaskListUiState.Success).tasks
+            )
+        }
 
-            is TaskListUiState.Success -> {
-                val tasks =
-                    (uiState as TaskListUiState.Success).tasks
-
-                if (tasks.isEmpty()) {
-                    EmptyState(
-                        message = "No tasks yet"
-                    )
-                } else {
-                    TaskList(tasks)
-                }
-            }
+        is TaskListUiState.Error -> {
+            Text(
+                text = (uiState as TaskListUiState.Error).message,
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
+
 
 
 @Composable

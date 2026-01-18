@@ -1,5 +1,9 @@
 package com.rudra.carelog.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -8,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.rudra.carelog.CareLogApp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import com.rudra.designsystem.theme.CareLogScaffold
 import com.rudra.tasks.ui.AddTaskScreen
 import com.rudra.tasks.ui.TaskListScreen
 import com.rudra.tasks.viewmodel.AddTaskViewModel
@@ -38,13 +43,25 @@ fun AppNavHost(
                     )
                 )
 
-            TaskListScreen(
-                viewModel = vm,
-                onAddClick = {
-                    navController.navigate(Routes.ADD_TASK)
+            CareLogScaffold(
+                title = "Tasks",
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(Routes.ADD_TASK)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Task"
+                        )
+                    }
                 }
-            )
+            ) {
+                TaskListScreen(viewModel = vm)
+            }
         }
+
 
         composable(Routes.ADD_TASK) {
             val vm: AddTaskViewModel =
