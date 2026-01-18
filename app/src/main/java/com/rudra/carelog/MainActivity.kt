@@ -15,7 +15,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.rudra.carelog.data.RepositoryProvider
 import com.rudra.carelog.ui.theme.CareLogTheme
+import com.rudra.tasks.ui.AddTaskScreen
 import com.rudra.tasks.ui.TaskListScreen
+import com.rudra.tasks.viewmodel.AddTaskViewModel
 import com.rudra.tasks.viewmodel.TaskListViewModel
 
 class MainActivity : ComponentActivity() {
@@ -26,14 +28,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CareLogTheme {
-                Greeting()
+                TaskList()
+                //AddTask()
             }
         }
     }
 }
 
 @Composable
-fun Greeting( ) {
+fun TaskList( ) {
     val context = LocalContext.current
 
     val repository =
@@ -45,5 +48,23 @@ fun Greeting( ) {
         }
 
     TaskListScreen(viewModel)
+
+}
+
+
+@Composable
+fun AddTask( ) {
+    val context = LocalContext.current
+
+    val repository =
+        RepositoryProvider.provideTaskRepository(context)
+
+    val addTaskViewModel =
+        remember {
+            AddTaskViewModel(repository)
+        }
+
+    AddTaskScreen(addTaskViewModel)
+
 
 }
