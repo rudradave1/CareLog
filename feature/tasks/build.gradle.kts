@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:common"))
     implementation(project(":core:domain"))
+    implementation(project(":core:designsystem"))
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
 }

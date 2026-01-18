@@ -1,14 +1,20 @@
 package com.rudra.tasks.ui
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.rudra.common.worker.ReminderWorker
 import com.rudra.common.worker.scheduleReminder
+import com.rudra.designsystem.theme.CareLogScaffold
+import com.rudra.designsystem.theme.CareLogTextField
+import com.rudra.designsystem.theme.PrimaryButton
+import com.rudra.designsystem.theme.Spacing
 import com.rudra.tasks.viewmodel.AddTaskViewModel
 
 @Composable
@@ -34,25 +40,24 @@ fun AddTaskScreen(
         }
     }
 
+    CareLogScaffold(title = "Add Task") {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
-        OutlinedTextField(
-            value = uiState.title,
-            onValueChange = viewModel::onTitleChange,
-            label = { Text("Task title") },
-            modifier = Modifier.fillMaxWidth()
-        )
+            CareLogTextField(
+                value = uiState.title,
+                label = "Task title",
+                onValueChange = viewModel::onTitleChange
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.md))
 
-        Button(
-            onClick = viewModel::saveTask,
-            enabled = !uiState.isSaving
-        ) {
-            Text("Save")
+            PrimaryButton(
+                text = "Save",
+                enabled = !uiState.isSaving,
+                onClick = viewModel::saveTask
+            )
         }
     }
 }

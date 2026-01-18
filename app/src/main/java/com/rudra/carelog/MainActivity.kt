@@ -29,8 +29,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            AppNavHost()
+            CareLogTheme {
+                AppNavHost()
+            }
         }
+
 
     }
 }
