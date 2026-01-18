@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rudra.carelog.navigation.AppNavHost
 import com.rudra.carelog.ui.theme.CareLogTheme
 import com.rudra.tasks.ui.AddTaskScreen
 import com.rudra.tasks.ui.TaskListScreen
@@ -27,13 +28,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-
         setContent {
-            CareLogTheme {
-                TaskList()
-                //AddTask()
-            }
+            AppNavHost()
         }
+
     }
 }
 
