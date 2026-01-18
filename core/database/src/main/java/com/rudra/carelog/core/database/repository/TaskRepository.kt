@@ -1,4 +1,4 @@
-package com.rudra.carelog.core.repository
+package com.rudra.carelog.core.database.repository
 
 import com.rudra.carelog.core.database.domain.model.Task
 import kotlinx.coroutines.flow.Flow
