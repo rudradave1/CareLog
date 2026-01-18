@@ -64,6 +64,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":feature:tasks"))
     implementation(project(":feature:settings"))
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

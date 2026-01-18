@@ -1,15 +1,15 @@
-package com.rudra.carelog.data
+package com.rudra.carelog.di
 
 import android.content.Context
 import com.rudra.carelog.core.database.provider.DatabaseProvider
 import com.rudra.carelog.core.database.repository.TaskRepository
 import com.rudra.carelog.core.database.repository.impl.TaskRepositoryImpl
 
-object RepositoryProvider {
+class AppContainer(context: Context) {
 
-    fun provideTaskRepository(context: Context): TaskRepository {
-        return TaskRepositoryImpl(
-            taskDao = DatabaseProvider.provideTaskDao(context)
-        )
-    }
+    private val taskDao =
+        DatabaseProvider.provideTaskDao(context)
+
+    val taskRepository: TaskRepository =
+        TaskRepositoryImpl(taskDao)
 }

@@ -13,12 +13,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.rudra.carelog.data.RepositoryProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rudra.carelog.ui.theme.CareLogTheme
 import com.rudra.tasks.ui.AddTaskScreen
 import com.rudra.tasks.ui.TaskListScreen
 import com.rudra.tasks.viewmodel.AddTaskViewModel
+import com.rudra.tasks.viewmodel.AddTaskViewModelFactory
 import com.rudra.tasks.viewmodel.TaskListViewModel
+import com.rudra.tasks.viewmodel.TaskListViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,16 +40,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TaskList( ) {
     val context = LocalContext.current
+    val appContainer =
+        (context.applicationContext as CareLogApp)
+            .appContainer
 
-    val repository =
-        RepositoryProvider.provideTaskRepository(context)
+    val taskListViewModel: TaskListViewModel =
+        viewModel(
+            factory = TaskListViewModelFactory(
+                appContainer.taskRepository
+            )
+        )
 
-    val viewModel =
-        remember {
-            TaskListViewModel(repository)
-        }
+    TaskListScreen(taskListViewModel)
 
-    TaskListScreen(viewModel)
 
 }
 
@@ -56,15 +61,16 @@ fun TaskList( ) {
 fun AddTask( ) {
     val context = LocalContext.current
 
-    val repository =
-        RepositoryProvider.provideTaskRepository(context)
+    val appContainer =
+        (context.applicationContext as CareLogApp)
+            .appContainer
 
-    val addTaskViewModel =
-        remember {
-            AddTaskViewModel(repository)
-        }
+    val addTaskViewModel: AddTaskViewModel =
+        viewModel(
+            factory = AddTaskViewModelFactory(
+                appContainer.taskRepository
+            )
+        )
 
     AddTaskScreen(addTaskViewModel)
-
-
 }
