@@ -7,6 +7,7 @@ import com.rudra.carelog.core.database.repository.TaskRepository
 import com.rudra.domain.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.util.UUID
 
 class TaskRepositoryImpl(
@@ -31,7 +32,7 @@ class TaskRepositoryImpl(
     override suspend fun completeTask(id: UUID) {
         taskDao.markTaskCompleted(
             taskId = id,
-            completedAt = java.time.LocalDate.now().toString()
+            completedAt = LocalDate.now().toString()
         )
     }
 }

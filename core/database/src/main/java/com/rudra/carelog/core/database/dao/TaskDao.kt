@@ -9,8 +9,16 @@ import java.util.UUID
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM tasks WHERE isActive = 1")
+    @Query("""
+    SELECT * FROM tasks
+    WHERE isActive = 1
+    ORDER BY 
+        CASE WHEN lastCompletedAt IS NULL THEN 0 ELSE 1 END,
+        lastCompletedAt DESC,
+        updatedAt DESC
+""")
     fun observeActiveTasks(): Flow<List<TaskEntity>>
+
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: UUID): TaskEntity?

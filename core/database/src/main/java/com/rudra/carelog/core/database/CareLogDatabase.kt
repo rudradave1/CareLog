@@ -10,9 +10,10 @@ import com.rudra.carelog.core.database.entity.TaskEntity
 @Database(
     entities = [TaskEntity::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class CareLogDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 }
+

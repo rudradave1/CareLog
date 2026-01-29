@@ -53,7 +53,8 @@ class AddTaskViewModel(
                     id = UUID.fromString(taskId),
                     title = current.title,
                     category = TaskCategory.PERSONAL,
-                    frequency = TaskFrequency.Daily,
+                    frequency = TaskFrequency.valueOf(frequency)
+                    ,
                     startDate = LocalDate.now(),
                     reminderTime = null,
                     lastCompletedAt = null,
