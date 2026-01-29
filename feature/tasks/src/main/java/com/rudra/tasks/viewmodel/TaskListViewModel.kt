@@ -25,6 +25,11 @@ class TaskListViewModel(
             repository.completeTask(id)
         }
     }
+    fun undoCompleteTask(id: UUID) {
+        viewModelScope.launch {
+            repository.restoreTask(id)
+        }
+    }
 
     private fun observeTasks() {
         viewModelScope.launch {

@@ -13,4 +13,5 @@ interface TaskRepository {
     suspend fun saveTask(task: Task)
 
     suspend fun completeTask(id: UUID)
+    suspend fun restoreTask(id: UUID)
 }
