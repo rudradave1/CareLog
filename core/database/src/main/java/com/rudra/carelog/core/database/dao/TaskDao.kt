@@ -31,4 +31,16 @@ interface TaskDao {
         completedAt: String,
         updatedAt: Long
     )
+    @Query(
+        """
+    UPDATE tasks
+    SET completedAt = NULL,
+        updatedAt = :updatedAt
+    WHERE id = :taskId
+    """
+    )
+    suspend fun restoreTask(
+        taskId: UUID,
+        updatedAt: Long
+    )
 }

@@ -36,5 +36,10 @@ class TaskRepositoryImpl(
             updatedAt = System.currentTimeMillis()
         )
     }
-
+    override suspend fun restoreTask(id: UUID) {
+        taskDao.restoreTask(
+            taskId = id,
+            updatedAt = System.currentTimeMillis()
+        )
+    }
 }
