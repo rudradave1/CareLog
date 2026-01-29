@@ -13,25 +13,34 @@ fun TaskEntity.toDomain(): Task {
         id = id,
         title = title,
         category = TaskCategory.valueOf(category),
-        frequency = TaskFrequency.valueOf(frequency),
+
+        frequency = decodeFrequency(frequencyType, frequencyData),
         startDate = LocalDate.parse(startDate),
-        reminderTime = reminderTime?.let(LocalTime::parse),
-        lastCompletedAt = lastCompletedAt?.let(LocalDate::parse),
-        isActive = isActive,
+
+        reminderTime = reminderTime?.let { LocalTime.parse(it) },
+        completedAt = completedAt?.let { LocalDate.parse(it) },
+
+        createdAt = createdAt,
         updatedAt = updatedAt
     )
 }
 
 fun Task.toEntity(): TaskEntity {
+    val (type, data) = encodeFrequency(frequency)
+
     return TaskEntity(
         id = id,
         title = title,
         category = category.name,
-        frequency = frequency.name,
+
+        frequencyType = type,
+        frequencyData = data,
+
         startDate = startDate.toString(),
         reminderTime = reminderTime?.toString(),
-        lastCompletedAt = lastCompletedAt?.toString(),
-        isActive = isActive,
+
+        completedAt = completedAt?.toString(),
+        createdAt = createdAt,
         updatedAt = updatedAt
     )
 }

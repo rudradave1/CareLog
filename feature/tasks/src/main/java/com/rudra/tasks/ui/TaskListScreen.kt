@@ -3,6 +3,8 @@ package com.rudra.tasks.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,45 +24,64 @@ import java.util.UUID
 
 @Composable
 fun TaskListScreen(
-    viewModel: TaskListViewModel
+    viewModel: TaskListViewModel,
+    onAddTaskClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    when (uiState) {
-        TaskListUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+    CareLogScaffold(
+        title = "Tasks",
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddTaskClick
             ) {
-                CircularProgressIndicator()
-            }
-        }
-
-        is TaskListUiState.Success -> {
-            val tasks = (uiState as TaskListUiState.Success).tasks
-            if (tasks.isEmpty()) {
-                EmptyState(
-                    message = "No tasks yet.\nTap + to add your first task."
-                )
-            } else {
-                TaskList(
-                    tasks = tasks,
-                    onComplete = viewModel::completeTask
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add task"
                 )
             }
         }
+    ) {
+        when (uiState) {
 
+            TaskListUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
 
-        is TaskListUiState.Error -> {
-            Text(
-                text = (uiState as TaskListUiState.Error).message,
-                modifier = Modifier.padding(16.dp)
-            )
+            is TaskListUiState.Success -> {
+                val tasks = (uiState as TaskListUiState.Success).tasks
+
+                if (tasks.isEmpty()) {
+                    EmptyState(
+                        message = "No tasks yet.\nTap + to add your first task."
+                    )
+                } else {
+                    TaskList(
+                        tasks = tasks,
+                        onComplete = viewModel::completeTask
+                    )
+                }
+            }
+
+            is TaskListUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = (uiState as TaskListUiState.Error).message,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
         }
     }
 }
-
-
 
 @Composable
 private fun TaskList(
@@ -71,7 +92,10 @@ private fun TaskList(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(Spacing.md)
     ) {
-        items(tasks, key = { it.id }) { task ->
+        items(
+            items = tasks,
+            key = { it.id }
+        ) { task ->
             TaskItem(
                 task = task,
                 onComplete = onComplete
@@ -81,9 +105,8 @@ private fun TaskList(
     }
 }
 
-
 @Composable
-fun TaskItem(
+private fun TaskItem(
     task: Task,
     onComplete: (UUID) -> Unit
 ) {
@@ -117,8 +140,9 @@ fun TaskItem(
                 )
 
                 task.lastCompletedAt?.let {
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Completed $it",
+                        text = "Completed on $it",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

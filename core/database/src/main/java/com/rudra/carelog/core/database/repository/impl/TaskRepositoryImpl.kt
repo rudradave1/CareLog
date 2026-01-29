@@ -32,7 +32,9 @@ class TaskRepositoryImpl(
     override suspend fun completeTask(id: UUID) {
         taskDao.markTaskCompleted(
             taskId = id,
-            completedAt = LocalDate.now().toString()
+            completedAt = java.time.LocalDate.now().toString(),
+            updatedAt = System.currentTimeMillis()
         )
     }
+
 }
