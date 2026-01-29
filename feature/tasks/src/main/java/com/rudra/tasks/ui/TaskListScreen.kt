@@ -21,6 +21,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,8 +42,27 @@ import java.util.UUID
 fun TaskListScreen(
     viewModel: TaskListViewModel,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
 
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = LocalSnackbarHostState.current
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is TaskListViewModel.TaskListEvent.TaskCompleted -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = "Task marked as complete",
+                        actionLabel = "Undo",
+                        duration = SnackbarDuration.Short
+                    )
+
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.undoCompleteTask(event.taskId)
+                    }
+                }
+            }
+        }
+    }
     when (uiState) {
 
         TaskListUiState.Loading -> {
@@ -65,7 +85,6 @@ fun TaskListScreen(
                 TaskList(
                     tasks = tasks,
                     onComplete = viewModel::completeTask,
-                    onUndo = viewModel::undoCompleteTask
                 )
             }
         }
@@ -88,7 +107,6 @@ fun TaskListScreen(
 private fun TaskList(
     tasks: List<Task>,
     onComplete: (UUID) -> Unit,
-    onUndo: (UUID) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -101,7 +119,6 @@ private fun TaskList(
             TaskItem(
                 task = task,
                 onComplete = onComplete,
-                onUndo = onUndo
             )
             Spacer(modifier = Modifier.height(Spacing.sm))
         }
@@ -113,27 +130,12 @@ private fun TaskList(
 fun TaskItem(
     task: Task,
     onComplete: (UUID) -> Unit,
-    onUndo: (UUID) -> Unit
 ) {
-    val snackbarHostState = LocalSnackbarHostState.current
-    val scope = rememberCoroutineScope()
 
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
             if (value == SwipeToDismissBoxValue.EndToStart) {
                 onComplete(task.id)
-
-                scope.launch {
-                    val result = snackbarHostState.showSnackbar(
-                        message = "Task completed",
-                        actionLabel = "Undo",
-                        duration = SnackbarDuration.Short
-                    )
-
-                    if (result == SnackbarResult.ActionPerformed) {
-                        onUndo(task.id)
-                    }
-                }
                 true
             } else false
         }

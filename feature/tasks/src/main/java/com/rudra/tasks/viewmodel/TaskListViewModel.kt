@@ -11,7 +11,11 @@ import java.util.UUID
 class TaskListViewModel(
     private val repository: TaskRepository
 ) : ViewModel() {
-
+    sealed interface TaskListEvent {
+        data class TaskCompleted(val taskId: UUID) : TaskListEvent
+    }
+    private val _events = MutableSharedFlow<TaskListEvent>()
+    val events = _events.asSharedFlow()
     private val _uiState =
         MutableStateFlow<TaskListUiState>(TaskListUiState.Loading)
     val uiState: StateFlow<TaskListUiState> = _uiState.asStateFlow()
@@ -23,8 +27,10 @@ class TaskListViewModel(
     fun completeTask(id: UUID) {
         viewModelScope.launch {
             repository.completeTask(id)
+            _events.emit(TaskListEvent.TaskCompleted(id))
         }
     }
+
     fun undoCompleteTask(id: UUID) {
         viewModelScope.launch {
             repository.restoreTask(id)
