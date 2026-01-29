@@ -12,7 +12,9 @@ object DatabaseProvider {
             context.applicationContext,
             CareLogDatabase::class.java,
             "carelog_db"
-        ).build()
+        )
+        // migrations go here
+        .build()
         return db.taskDao()
     }
 }

@@ -6,6 +6,7 @@ import com.rudra.carelog.core.database.repository.TaskRepository
 import com.rudra.tasks.state.TaskListUiState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class TaskListViewModel(
     private val repository: TaskRepository
@@ -17,6 +18,12 @@ class TaskListViewModel(
 
     init {
         observeTasks()
+    }
+
+    fun completeTask(id: UUID) {
+        viewModelScope.launch {
+            repository.completeTask(id)
+        }
     }
 
     private fun observeTasks() {

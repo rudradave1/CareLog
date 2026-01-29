@@ -7,15 +7,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rudra.designsystem.components.EmptyState
 import com.rudra.designsystem.components.LoadingState
 import com.rudra.designsystem.components.TaskCard
 import com.rudra.designsystem.theme.CareLogScaffold
+import com.rudra.designsystem.theme.Spacing
 import com.rudra.domain.Task
 import com.rudra.tasks.state.TaskListUiState
 import com.rudra.tasks.viewmodel.TaskListViewModel
+import java.util.UUID
 
 @Composable
 fun TaskListScreen(
@@ -34,10 +37,19 @@ fun TaskListScreen(
         }
 
         is TaskListUiState.Success -> {
-            TaskList(
-                tasks = (uiState as TaskListUiState.Success).tasks
-            )
+            val tasks = (uiState as TaskListUiState.Success).tasks
+            if (tasks.isEmpty()) {
+                EmptyState(
+                    message = "No tasks yet.\nTap + to add your first task."
+                )
+            } else {
+                TaskList(
+                    tasks = tasks,
+                    onComplete = viewModel::completeTask
+                )
+            }
         }
+
 
         is TaskListUiState.Error -> {
             Text(
@@ -51,36 +63,67 @@ fun TaskListScreen(
 
 
 @Composable
-fun TaskList(
-    tasks: List<Task>
+private fun TaskList(
+    tasks: List<Task>,
+    onComplete: (UUID) -> Unit
 ) {
-    LazyColumn {
-        items(tasks) { task ->
-            TaskCard(
-                title = task.title,
-                subtitle = task.category.name
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(Spacing.md)
+    ) {
+        items(tasks, key = { it.id }) { task ->
+            TaskItem(
+                task = task,
+                onComplete = onComplete
             )
+            Spacer(modifier = Modifier.height(Spacing.sm))
         }
     }
 }
 
 
 @Composable
-private fun TaskItem(task: Task) {
+fun TaskItem(
+    task: Task,
+    onComplete: (UUID) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = task.title,
-                style = MaterialTheme.typography.titleMedium
+            Checkbox(
+                checked = task.isCompleted,
+                onCheckedChange = {
+                    if (!task.isCompleted) {
+                        onComplete(task.id)
+                    }
+                }
             )
-            Text(
-                text = task.category.name,
-                style = MaterialTheme.typography.bodyMedium
-            )
+
+            Spacer(modifier = Modifier.width(Spacing.sm))
+
+            Column {
+                Text(
+                    text = task.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    textDecoration =
+                        if (task.isCompleted)
+                            TextDecoration.LineThrough
+                        else TextDecoration.None
+                )
+
+                task.lastCompletedAt?.let {
+                    Text(
+                        text = "Completed $it",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
     }
 }

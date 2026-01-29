@@ -14,4 +14,7 @@ data class Task(
     val lastCompletedAt: LocalDate?,
     val isActive: Boolean,
     val updatedAt: Long
-)
+) {
+    val isCompleted: Boolean
+        get() = lastCompletedAt != null
+}
