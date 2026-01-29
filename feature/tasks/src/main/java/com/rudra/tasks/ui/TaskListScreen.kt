@@ -106,7 +106,7 @@ private fun TaskList(
 }
 
 @Composable
-private fun TaskItem(
+fun TaskItem(
     task: Task,
     onComplete: (UUID) -> Unit
 ) {
@@ -114,8 +114,7 @@ private fun TaskItem(
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier
-                .padding(Spacing.md),
+            modifier = Modifier.padding(Spacing.md),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -139,10 +138,10 @@ private fun TaskItem(
                         else TextDecoration.None
                 )
 
-                task.lastCompletedAt?.let {
+                task.completedAt?.let { completedDate ->
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Completed on $it",
+                        text = "Completed on $completedDate",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

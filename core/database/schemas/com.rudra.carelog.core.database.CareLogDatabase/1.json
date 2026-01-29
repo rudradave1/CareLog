@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "99e71cc15780cf318fc2bbe9f1c85de6",
+    "identityHash": "855168adfe5859e446e62c1c309587aa",
     "entities": [
       {
         "tableName": "tasks",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `category` TEXT NOT NULL, `frequency` TEXT NOT NULL, `startDate` TEXT NOT NULL, `reminderTime` TEXT, `lastCompletedAt` TEXT, `isActive` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `title` TEXT NOT NULL, `category` TEXT NOT NULL, `frequencyType` TEXT NOT NULL, `frequencyData` TEXT, `startDate` TEXT NOT NULL, `reminderTime` TEXT, `completedAt` TEXT, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,10 +27,16 @@
             "notNull": true
           },
           {
-            "fieldPath": "frequency",
-            "columnName": "frequency",
+            "fieldPath": "frequencyType",
+            "columnName": "frequencyType",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "frequencyData",
+            "columnName": "frequencyData",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "startDate",
@@ -45,14 +51,14 @@
             "notNull": false
           },
           {
-            "fieldPath": "lastCompletedAt",
-            "columnName": "lastCompletedAt",
+            "fieldPath": "completedAt",
+            "columnName": "completedAt",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "isActive",
-            "columnName": "isActive",
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -76,7 +82,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '99e71cc15780cf318fc2bbe9f1c85de6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '855168adfe5859e446e62c1c309587aa')"
     ]
   }
 }
