@@ -28,7 +28,8 @@ class AddTaskViewModel(
     private val _uiState =
         MutableStateFlow(
             AddTaskUiState(
-                title = savedStateHandle[KEY_TITLE] ?: ""
+                title = savedStateHandle[KEY_TITLE] ?: "",
+                frequency = TaskFrequency.Daily
             )
         )
 
@@ -40,6 +41,13 @@ class AddTaskViewModel(
 
         _uiState.value =
             _uiState.value.copy(title = newTitle)
+    }
+    private fun defaultFrequency(): TaskFrequency {
+        return TaskFrequency.Daily
+    }
+    fun onFrequencyChange(frequency: TaskFrequency) {
+        _uiState.value =
+            _uiState.value.copy(frequency = frequency)
     }
 
     fun saveTask() {
@@ -57,7 +65,7 @@ class AddTaskViewModel(
                     id = taskId,
                     title = current.title,
                     category = TaskCategory.PERSONAL,
-                    frequency = TaskFrequency.Daily, // locked for MVP
+                    frequency = current.frequency, // ✅ comes from UI now
                     startDate = LocalDate.now(),
                     reminderTime = null,
                     completedAt = null,
@@ -65,6 +73,7 @@ class AddTaskViewModel(
                     updatedAt = now
                 )
             )
+
 
             _uiState.value =
                 current.copy(
@@ -76,7 +85,6 @@ class AddTaskViewModel(
             savedStateHandle.remove<String>(KEY_TITLE)
         }
     }
-
 
     fun onTaskConsumed() {
         _uiState.value =

@@ -1,16 +1,22 @@
 package com.rudra.settings.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rudra.designsystem.theme.Spacing
 import com.rudra.settings.viewmodel.SettingsViewModel
 
@@ -19,25 +25,34 @@ fun SettingsScreen(
     viewModel: SettingsViewModel
 ) {
     val remindersEnabled by
-        viewModel.remindersEnabled
-            .collectAsState()
+    viewModel.remindersEnabled.collectAsStateWithLifecycle()
 
-    Row(
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(Spacing.md)
     ) {
         Text(
-            text = "Enable reminders",
-            modifier = Modifier.weight(1f)
+            text = "Notifications",
+            style = MaterialTheme.typography.titleMedium
         )
 
-        Spacer(modifier = Modifier.width(Spacing.sm))
+        Spacer(modifier = Modifier.height(Spacing.md))
 
-        Switch(
-            checked = remindersEnabled,
-            onCheckedChange =
-                viewModel::onRemindersToggled
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Task reminders",
+                modifier = Modifier.weight(1f)
+            )
+
+            Switch(
+                checked = remindersEnabled,
+                onCheckedChange =
+                    viewModel::onRemindersToggled
+            )
+        }
     }
 }

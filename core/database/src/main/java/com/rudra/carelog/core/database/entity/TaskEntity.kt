@@ -11,15 +11,14 @@ data class TaskEntity(
     val id: UUID,
 
     val title: String,
-    val category: String,
+    val category: String,          // enum name
+    val frequency: String,         // sealed → encoded string
 
-    val frequencyType: String,   // DAILY / WEEKLY / MONTHLY
-    val frequencyData: String?,  // encoded payload
+    val startDate: String,         // ISO LocalDate
+    val reminderTime: String?,     // ISO LocalTime
 
-    val startDate: String,
-    val reminderTime: String?,
+    val completedAt: String?,      // ISO LocalDate or null
 
-    val completedAt: String?,    // null = active
     val createdAt: Long,
     val updatedAt: Long
 )

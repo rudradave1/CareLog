@@ -1,9 +1,12 @@
 package com.rudra.tasks.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,21 +50,34 @@ fun AddTaskScreen(
 
     CareLogScaffold(title = "Add Task") {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(Spacing.md),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            CareLogTextField(
-                value = uiState.title,
-                label = "Task title",
-                onValueChange = viewModel::onTitleChange
-            )
 
-            Spacer(modifier = Modifier.height(Spacing.md))
+            Column {
+                CareLogTextField(
+                    value = uiState.title,
+                    label = "Task title",
+                    onValueChange = viewModel::onTitleChange
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.lg))
+
+                FrequencySelector(
+                    selected = uiState.frequency,
+                    onChange = viewModel::onFrequencyChange
+                )
+            }
 
             PrimaryButton(
-                text = "Save",
+                text = "Save task",
                 enabled = !uiState.isSaving,
-                onClick = viewModel::saveTask
+                onClick = viewModel::saveTask,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
+
 }

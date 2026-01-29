@@ -21,10 +21,11 @@ interface TaskDao {
 
     @Query(
         """
-        UPDATE tasks 
-        SET completedAt = :completedAt, updatedAt = :updatedAt
-        WHERE id = :taskId
-        """
+    UPDATE tasks
+    SET completedAt = :completedAt,
+        updatedAt = :updatedAt
+    WHERE id = :taskId
+    """
     )
     suspend fun markTaskCompleted(
         taskId: UUID,

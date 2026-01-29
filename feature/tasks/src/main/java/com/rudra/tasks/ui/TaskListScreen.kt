@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +42,7 @@ import com.rudra.designsystem.theme.Spacing
 import com.rudra.designsystem.util.displayText
 import com.rudra.domain.Task
 import com.rudra.tasks.state.TaskListUiState
+import com.rudra.tasks.viewmodel.TaskListEvent
 import com.rudra.tasks.viewmodel.TaskListViewModel
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -55,7 +58,7 @@ fun TaskListScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is TaskListViewModel.TaskListEvent.TaskCompleted -> {
+                is TaskListEvent.TaskCompleted -> {
                     val result = snackbarHostState.showSnackbar(
                         message = "Task marked as complete",
                         actionLabel = "Undo",
@@ -124,6 +127,8 @@ private fun LazyListScope.TaskSections(
 
         items(activeTasks, key = { it.id }) { task ->
             TaskItem(task = task, onComplete = onComplete)
+            CategoryChip(category = task.category)
+
             Spacer(modifier = Modifier.height(Spacing.sm))
         }
     }
@@ -146,12 +151,17 @@ fun SectionHeader(
     title: String
 ) {
     Text(
-        text = title,
-        style = MaterialTheme.typography.titleSmall,
+        text = title.uppercase(),
+        style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(vertical = Spacing.sm)
+        modifier = Modifier
+            .padding(
+                top = Spacing.lg,
+                bottom = Spacing.sm
+            )
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,60 +183,78 @@ fun TaskItem(
         state = dismissState,
         backgroundContent = {},
         content = {
-            TaskCard(task = task)
+            TaskCard(task = task) {
+                onComplete(task.id)
+            }
         }
     )
 }
 
 @Composable
 fun TaskCard(
-    task: Task
+    task: Task,
+    onComplete: (UUID) -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        colors =
+            if (task.isCompleted)
+                CardDefaults.cardColors(
+                    containerColor =
+                        MaterialTheme.colorScheme.surfaceVariant
+                )
+            else CardDefaults.cardColors(),
+        elevation =
+            CardDefaults.cardElevation(
+                defaultElevation = 1.dp
+            )
     ) {
-        Column(
-            modifier = Modifier.padding(Spacing.md)
+        Row(
+            modifier = Modifier.padding(Spacing.md),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // ── Row 1: Title ──
-            Text(
-                text = task.title,
-                style = MaterialTheme.typography.titleMedium,
-                textDecoration =
-                    if (task.isCompleted)
-                        TextDecoration.LineThrough
-                    else TextDecoration.None
+            Checkbox(
+                checked = task.isCompleted,
+                onCheckedChange = {
+                    if (!task.isCompleted) {
+                        onComplete(task.id)
+                    }
+                }
             )
 
-            Spacer(modifier = Modifier.height(Spacing.xs))
+            Spacer(modifier = Modifier.width(Spacing.sm))
 
-            // ── Row 2: Metadata ──
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CategoryChip(
-                    category = task.category
+            Column {
+                Text(
+                    text = task.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    textDecoration =
+                        if (task.isCompleted)
+                            TextDecoration.LineThrough
+                        else TextDecoration.None
                 )
 
-                Spacer(modifier = Modifier.width(Spacing.sm))
+                Spacer(modifier = Modifier.height(Spacing.xs))
 
                 Text(
                     text = task.frequency.displayText(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color =
+                        MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
 
-            // ── Row 3: Completion info ──
-            task.completedAt?.let {
-                Spacer(modifier = Modifier.height(Spacing.xs))
-                Text(
-                    text = "Completed on $it",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                task.completedAt?.let {
+                    Spacer(modifier = Modifier.height(Spacing.xs))
+                    Text(
+                        text = "Completed on $it",
+                        style =
+                            MaterialTheme.typography.bodySmall,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }
 }
+

@@ -11,9 +11,6 @@ import java.util.UUID
 class TaskListViewModel(
     private val repository: TaskRepository
 ) : ViewModel() {
-    sealed interface TaskListEvent {
-        data class TaskCompleted(val taskId: UUID) : TaskListEvent
-    }
     private val _events = MutableSharedFlow<TaskListEvent>()
     val events = _events.asSharedFlow()
     private val _uiState =
@@ -55,4 +52,7 @@ class TaskListViewModel(
                 }
         }
     }
+}
+sealed interface TaskListEvent {
+    data class TaskCompleted(val taskId: UUID) : TaskListEvent
 }
