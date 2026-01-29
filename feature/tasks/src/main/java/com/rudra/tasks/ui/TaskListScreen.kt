@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.rudra.designsystem.components.CategoryChip
 import com.rudra.designsystem.components.EmptyState
+import com.rudra.designsystem.components.LoadingState
 import com.rudra.designsystem.theme.LocalSnackbarHostState
 import com.rudra.designsystem.theme.Spacing
 import com.rudra.designsystem.util.displayText
@@ -46,10 +48,10 @@ import java.util.UUID
 fun TaskListScreen(
     viewModel: TaskListViewModel,
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = LocalSnackbarHostState.current
 
+    // One-off events
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
@@ -57,7 +59,7 @@ fun TaskListScreen(
                     val result = snackbarHostState.showSnackbar(
                         message = "Task marked as complete",
                         actionLabel = "Undo",
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Long
                     )
 
                     if (result == SnackbarResult.ActionPerformed) {
@@ -67,84 +69,78 @@ fun TaskListScreen(
             }
         }
     }
-    when (uiState) {
 
-        TaskListUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
+    when (uiState) {
+        TaskListUiState.Loading -> LoadingState()
 
         is TaskListUiState.Success -> {
-            val tasks = (uiState as TaskListUiState.Success).tasks
-            val activeTasks = tasks.filter { !it.isCompleted }
-            val completedTasks = tasks.filter { it.isCompleted }
-
-            if (tasks.isEmpty()) {
-                EmptyState(
-                    message = "No tasks yet.\nTap + to add your first task."
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(Spacing.md)
-                ) {
-
-                    if (activeTasks.isNotEmpty()) {
-                        item {
-                            SectionHeader(title = "Active")
-                        }
-
-                        items(
-                            items = activeTasks,
-                            key = { it.id }
-                        ) { task ->
-                            TaskItem(
-                                task = task,
-                                onComplete = viewModel::completeTask
-                            )
-                            Spacer(modifier = Modifier.height(Spacing.sm))
-                        }
-                    }
-
-                    if (completedTasks.isNotEmpty()) {
-                        item {
-                            Spacer(modifier = Modifier.height(Spacing.lg))
-                            SectionHeader(title = "Completed")
-                        }
-
-                        items(
-                            items = completedTasks,
-                            key = { it.id }
-                        ) { task ->
-                            TaskItem(
-                                task = task,
-                                onComplete = {} // already completed
-                            )
-                            Spacer(modifier = Modifier.height(Spacing.sm))
-                        }
-                    }
-                }
-
-            }
+            TaskListContent(
+                tasks = (uiState as TaskListUiState.Success).tasks,
+                onComplete = viewModel::completeTask
+            )
         }
 
         is TaskListUiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = (uiState as TaskListUiState.Error).message,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+            EmptyState(
+                message = (uiState as TaskListUiState.Error).message
+            )
         }
     }
 }
+
+@Composable
+private fun TaskListContent(
+    tasks: List<Task>,
+    onComplete: (UUID) -> Unit
+) {
+    if (tasks.isEmpty()) {
+        EmptyState(
+            message = "No tasks yet.\nTap + to add your first task."
+        )
+        return
+    }
+
+    val activeTasks = tasks.filter { !it.isCompleted }
+    val completedTasks = tasks.filter { it.isCompleted }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(Spacing.md)
+    ) {
+        TaskSections(
+            activeTasks = activeTasks,
+            completedTasks = completedTasks,
+            onComplete = onComplete
+        )
+    }
+}
+private fun LazyListScope.TaskSections(
+    activeTasks: List<Task>,
+    completedTasks: List<Task>,
+    onComplete: (UUID) -> Unit
+) {
+    if (activeTasks.isNotEmpty()) {
+        item { SectionHeader(title = "Active") }
+
+        items(activeTasks, key = { it.id }) { task ->
+            TaskItem(task = task, onComplete = onComplete)
+            Spacer(modifier = Modifier.height(Spacing.sm))
+        }
+    }
+
+    if (completedTasks.isNotEmpty()) {
+        item {
+            Spacer(modifier = Modifier.height(Spacing.lg))
+            SectionHeader(title = "Completed")
+        }
+
+        items(completedTasks, key = { it.id }) { task ->
+            TaskItem(task = task, onComplete = {})
+            Spacer(modifier = Modifier.height(Spacing.sm))
+        }
+    }
+}
+
 @Composable
 fun SectionHeader(
     title: String
@@ -155,28 +151,6 @@ fun SectionHeader(
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(vertical = Spacing.sm)
     )
-}
-
-@Composable
-private fun TaskList(
-    tasks: List<Task>,
-    onComplete: (UUID) -> Unit,
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(Spacing.md)
-    ) {
-        items(
-            items = tasks,
-            key = { it.id }
-        ) { task ->
-            TaskItem(
-                task = task,
-                onComplete = onComplete,
-            )
-            Spacer(modifier = Modifier.height(Spacing.sm))
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
