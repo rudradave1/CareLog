@@ -13,7 +13,7 @@ object DatabaseProvider {
             CareLogDatabase::class.java,
             "carelog_db"
         )
-        // migrations go here
+        .fallbackToDestructiveMigration() // ⬅️ REQUIRED
         .build()
         return db.taskDao()
     }

@@ -43,23 +43,22 @@ class AddTaskViewModel(
         if (current.title.isBlank()) return
 
         viewModelScope.launch {
-            _uiState.value =
-                current.copy(isSaving = true)
+            _uiState.value = current.copy(isSaving = true)
 
-            val taskId = UUID.randomUUID().toString()
+            val now = System.currentTimeMillis()
+            val taskId = UUID.randomUUID()
 
             repository.saveTask(
                 Task(
-                    id = UUID.fromString(taskId),
+                    id = taskId,
                     title = current.title,
                     category = TaskCategory.PERSONAL,
-                    frequency = TaskFrequency.valueOf(frequency)
-                    ,
+                    frequency = TaskFrequency.Daily, // locked for MVP
                     startDate = LocalDate.now(),
                     reminderTime = null,
-                    lastCompletedAt = null,
-                    isActive = true,
-                    updatedAt = System.currentTimeMillis()
+                    completedAt = null,
+                    createdAt = now,
+                    updatedAt = now
                 )
             )
 
@@ -67,12 +66,13 @@ class AddTaskViewModel(
                 current.copy(
                     isSaving = false,
                     taskSaved = true,
-                    savedTaskId = taskId
+                    savedTaskId = taskId.toString()
                 )
 
             savedStateHandle.remove<String>(KEY_TITLE)
         }
     }
+
 
     fun onTaskConsumed() {
         _uiState.value =

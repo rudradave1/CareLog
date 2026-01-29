@@ -64,7 +64,7 @@ fun AppNavHost(
                     }
                 }
             ) {
-                TaskListScreen(viewModel = vm)
+                TaskListScreen(viewModel = vm, onAddTaskClick = {})
             }
         }
 

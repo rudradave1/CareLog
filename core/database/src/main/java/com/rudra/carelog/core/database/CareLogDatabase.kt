@@ -9,7 +9,7 @@ import com.rudra.carelog.core.database.entity.TaskEntity
 
 @Database(
     entities = [TaskEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
