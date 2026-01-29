@@ -7,14 +7,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rudra.carelog.CareLogApp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rudra.designsystem.theme.CareLogScaffold
 import com.rudra.settings.ui.SettingsScreen
 import com.rudra.settings.viewmodel.SettingsViewModel
@@ -64,7 +63,7 @@ fun AppNavHost(
                     }
                 }
             ) {
-                TaskListScreen(viewModel = vm, onAddTaskClick = {})
+                TaskListScreen(viewModel = vm)
             }
         }
 
