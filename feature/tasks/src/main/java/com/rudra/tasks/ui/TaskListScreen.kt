@@ -80,16 +80,55 @@ fun TaskListScreen(
 
         is TaskListUiState.Success -> {
             val tasks = (uiState as TaskListUiState.Success).tasks
+            val activeTasks = tasks.filter { !it.isCompleted }
+            val completedTasks = tasks.filter { it.isCompleted }
 
             if (tasks.isEmpty()) {
                 EmptyState(
                     message = "No tasks yet.\nTap + to add your first task."
                 )
             } else {
-                TaskList(
-                    tasks = tasks,
-                    onComplete = viewModel::completeTask,
-                )
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(Spacing.md)
+                ) {
+
+                    if (activeTasks.isNotEmpty()) {
+                        item {
+                            SectionHeader(title = "Active")
+                        }
+
+                        items(
+                            items = activeTasks,
+                            key = { it.id }
+                        ) { task ->
+                            TaskItem(
+                                task = task,
+                                onComplete = viewModel::completeTask
+                            )
+                            Spacer(modifier = Modifier.height(Spacing.sm))
+                        }
+                    }
+
+                    if (completedTasks.isNotEmpty()) {
+                        item {
+                            Spacer(modifier = Modifier.height(Spacing.lg))
+                            SectionHeader(title = "Completed")
+                        }
+
+                        items(
+                            items = completedTasks,
+                            key = { it.id }
+                        ) { task ->
+                            TaskItem(
+                                task = task,
+                                onComplete = {} // already completed
+                            )
+                            Spacer(modifier = Modifier.height(Spacing.sm))
+                        }
+                    }
+                }
+
             }
         }
 
@@ -105,6 +144,17 @@ fun TaskListScreen(
             }
         }
     }
+}
+@Composable
+fun SectionHeader(
+    title: String
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(vertical = Spacing.sm)
+    )
 }
 
 @Composable

@@ -20,6 +20,10 @@ class AddTaskViewModel(
     private val repository: TaskRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+    // MVP: Category and frequency are locked to Personal / Daily.
+    // UI selectors will be added in Phase 3.
+    // frequency = TaskFrequency.Daily,
+    // category = TaskCategory.PERSONAL,
 
     private val _uiState =
         MutableStateFlow(
