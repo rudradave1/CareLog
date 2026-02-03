@@ -1,9 +1,11 @@
 # CareLog — Offline-First Android Task App
 
-CareLog is a **production-grade, offline-first Android application** built to demonstrate how modern Android apps handle **local persistence, background sync, and conflict resolution** reliably.
+Offline-first Android task app demonstrating Room as source of truth, background sync with WorkManager, and conflict resolution. Built as a production-grade engineering portfolio project.
 
-This project is intentionally scoped as an **engineering showcase**, not a consumer productivity app.
+CareLog is a production-grade, offline-first Android application built to demonstrate reliable local persistence, background synchronization, and conflict resolution. 
 
+The app uses Room as the single source of truth, supports manual and periodic sync via WorkManager, and resolves conflicts deterministically using timestamps. This project is intended as an engineering showcase rather than a consumer task app.
+ 
 ---
 
 ## ✨ Key Highlights
