@@ -1,6 +1,7 @@
 package com.rudra.carelog.core.database.repository.impl
 
 import com.rudra.carelog.core.database.dao.TaskDao
+import com.rudra.carelog.core.database.entity.TaskEntity
 import com.rudra.carelog.core.database.mapper.toEntity
 import com.rudra.carelog.core.database.mapper.toNetworkDto
 import com.rudra.common.preferences.SyncPreferences
@@ -49,25 +50,37 @@ class TaskSyncRepositoryImpl(
                         remoteChanges.map { UUID.fromString(it.id) }
                     ).associateBy { it.id }
 
-                    val merged = remoteChanges.mapNotNull { remote ->
+                    val merged = mutableListOf<TaskEntity>()
+                    val deletes = mutableListOf<UUID>()
+
+                    remoteChanges.forEach { remote ->
                         val local = localById[UUID.fromString(remote.id)]
                         if (local == null || remote.updatedAt > local.updatedAt) {
-                            remote.toEntity(
-                                pendingSync = false,
-                                lastSyncedAt = serverTime
-                            )
-                        } else {
-                            null
+                            if (remote.deletedAt != null) {
+                                deletes.add(UUID.fromString(remote.id))
+                            } else {
+                                merged.add(
+                                    remote.toEntity(
+                                        pendingSync = false,
+                                        lastSyncedAt = serverTime
+                                    )
+                                )
+                            }
                         }
                     }
 
                     if (merged.isNotEmpty()) {
                         taskDao.upsertTasks(merged)
                     }
+
+                    if (deletes.isNotEmpty()) {
+                        taskDao.deleteTasks(deletes)
+                    }
                 }
 
                 // Mark local changes as synced after the server acknowledges.
-                // If the server returns appliedIds, we honor those specifically.
+                // When available, appliedIds prevents us from clearing changes
+                // that lost a conflict to a newer server version.
                 val appliedIds = if (response.appliedIds.isNotEmpty()) {
                     response.appliedIds.map { UUID.fromString(it) }
                 } else {

@@ -1,6 +1,8 @@
 package com.rudra.network
 
+import android.content.Context
 import com.rudra.network.api.TaskSyncApi
+import com.rudra.network.fake.FakeTaskSyncApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -11,7 +13,19 @@ import java.util.concurrent.TimeUnit
 
 object NetworkProvider {
 
-    fun provideTaskSyncApi(): TaskSyncApi {
+    fun provideTaskSyncApi(
+        context: Context
+    ): TaskSyncApi {
+        // Use a local fake server in debug so we can test full sync
+        // semantics without weakening offline-first behavior.
+        return if (BuildConfig.DEBUG) {
+            FakeTaskSyncApi(context)
+        } else {
+            createRetrofitApi()
+        }
+    }
+
+    private fun createRetrofitApi(): TaskSyncApi {
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()

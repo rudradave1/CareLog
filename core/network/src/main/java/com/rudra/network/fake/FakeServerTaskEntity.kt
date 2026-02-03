@@ -1,11 +1,11 @@
-package com.rudra.network.model
+package com.rudra.network.fake
 
-/**
- * Network representation of a Task.
- *
- * Dates/times are ISO-8601 strings to avoid timezone ambiguity.
- */
-data class NetworkTaskDto(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "server_tasks")
+data class FakeServerTaskEntity(
+    @PrimaryKey
     val id: String,
     val title: String,
     val category: String,
@@ -15,6 +15,5 @@ data class NetworkTaskDto(
     val completedAt: String?,
     val createdAt: Long,
     val updatedAt: Long,
-    // Non-null indicates a delete/tombstone.
     val deletedAt: Long? = null
 )

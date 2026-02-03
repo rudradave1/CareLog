@@ -74,4 +74,10 @@ interface TaskDao {
         taskIds: List<UUID>,
         syncedAt: Long
     )
+
+    @Query("DELETE FROM tasks WHERE id = :taskId")
+    suspend fun deleteTask(taskId: UUID)
+
+    @Query("DELETE FROM tasks WHERE id IN (:taskIds)")
+    suspend fun deleteTasks(taskIds: List<UUID>)
 }

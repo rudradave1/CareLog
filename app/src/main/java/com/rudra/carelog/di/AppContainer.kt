@@ -22,7 +22,7 @@ class AppContainer(context: Context) {
         SyncPreferences(context)
 
     private val syncApi =
-        NetworkProvider.provideTaskSyncApi()
+        NetworkProvider.provideTaskSyncApi(context)
 
     val taskSyncRepository: TaskSyncRepository =
         TaskSyncRepositoryImpl(

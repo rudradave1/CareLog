@@ -1,12 +1,10 @@
-package com.rudra.carelog.core.database.mapper
+package com.rudra.network.fake
 
-import com.rudra.carelog.core.database.entity.TaskEntity
 import com.rudra.network.model.NetworkTaskDto
-import java.util.UUID
 
-fun TaskEntity.toNetworkDto(): NetworkTaskDto {
+fun FakeServerTaskEntity.toDto(): NetworkTaskDto {
     return NetworkTaskDto(
-        id = id.toString(),
+        id = id,
         title = title,
         category = category,
         frequency = frequency,
@@ -15,16 +13,13 @@ fun TaskEntity.toNetworkDto(): NetworkTaskDto {
         completedAt = completedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        deletedAt = null
+        deletedAt = deletedAt
     )
 }
 
-fun NetworkTaskDto.toEntity(
-    pendingSync: Boolean = false,
-    lastSyncedAt: Long? = null
-): TaskEntity {
-    return TaskEntity(
-        id = UUID.fromString(id),
+fun NetworkTaskDto.toServerEntity(): FakeServerTaskEntity {
+    return FakeServerTaskEntity(
+        id = id,
         title = title,
         category = category,
         frequency = frequency,
@@ -33,7 +28,6 @@ fun NetworkTaskDto.toEntity(
         completedAt = completedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        pendingSync = pendingSync,
-        lastSyncedAt = lastSyncedAt
+        deletedAt = deletedAt
     )
 }
