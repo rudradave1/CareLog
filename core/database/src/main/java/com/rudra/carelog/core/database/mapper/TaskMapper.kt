@@ -35,7 +35,8 @@ fun Task.toEntity(): TaskEntity {
         reminderTime = reminderTime?.toString(),
         completedAt = completedAt?.toString(),
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        pendingSync = true,
+        lastSyncedAt = null
     )
 }
-

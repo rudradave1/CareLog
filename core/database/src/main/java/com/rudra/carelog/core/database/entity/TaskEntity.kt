@@ -1,6 +1,7 @@
 package com.rudra.carelog.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import java.util.UUID
 
@@ -20,5 +21,10 @@ data class TaskEntity(
     val completedAt: String?,      // ISO LocalDate or null
 
     val createdAt: Long,
-    val updatedAt: Long
+    val updatedAt: Long,
+    // Tracks local changes that still need to be synced.
+    @ColumnInfo(defaultValue = "1")
+    val pendingSync: Boolean = true,
+    // When this record was last confirmed by the server.
+    val lastSyncedAt: Long? = null
 )

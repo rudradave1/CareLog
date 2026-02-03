@@ -3,7 +3,7 @@ package com.rudra.carelog
 import android.app.Application
 import com.rudra.carelog.di.AppContainer
 import com.rudra.common.worker.cancelAllReminders
-import com.rudra.notifications.NotificationChannels
+import com.rudra.carelog.sync.SyncScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +19,7 @@ class CareLogApp : Application() {
         appContainer = AppContainer(this)
 
         observeReminderPreference()
+        SyncScheduler.schedulePeriodicSync(this)
     }
 
     private fun observeReminderPreference() {

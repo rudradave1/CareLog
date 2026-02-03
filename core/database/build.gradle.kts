@@ -53,5 +53,7 @@ dependencies {
     kapt(libs.androidx.room.compiler)
 
     implementation(project(":core:domain"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

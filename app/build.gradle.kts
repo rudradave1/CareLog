@@ -62,11 +62,13 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:network"))
     implementation(project(":core:notifications"))
     implementation(project(":feature:tasks"))
     implementation(project(":feature:settings"))
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
     implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation(libs.androidx.work.runtime.ktx)
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

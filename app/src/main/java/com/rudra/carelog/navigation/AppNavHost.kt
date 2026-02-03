@@ -105,7 +105,8 @@ fun AppNavHost(
             val vm: SettingsViewModel =
                 viewModel(
                     factory = SettingsViewModelFactory(
-                        appContainer.userPreferences
+                        userPreferences = appContainer.userPreferences,
+                        taskSyncRepository = appContainer.taskSyncRepository
                     )
                 )
 
