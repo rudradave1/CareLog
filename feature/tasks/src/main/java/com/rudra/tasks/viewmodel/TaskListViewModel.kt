@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * Exposes task list state and user actions for the list screen.
+ */
 class TaskListViewModel(
     private val repository: TaskRepository
 ) : ViewModel() {

@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.util.UUID
 
+/**
+ * Default implementation of [TaskRepository] backed by Room.
+ */
 class TaskRepositoryImpl(
     private val taskDao: TaskDao
 ) : TaskRepository {

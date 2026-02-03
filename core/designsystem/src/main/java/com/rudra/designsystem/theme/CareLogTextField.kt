@@ -1,25 +1,35 @@
 package com.rudra.designsystem.theme
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun CareLogTextField(
     value: String,
     label: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    supportingText: String? = null,
+    singleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth(),
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp)
+        singleLine = singleLine,
+        supportingText = supportingText?.let {
+            { Text(text = it) }
+        },
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        shape = MaterialTheme.shapes.medium
     )
 }

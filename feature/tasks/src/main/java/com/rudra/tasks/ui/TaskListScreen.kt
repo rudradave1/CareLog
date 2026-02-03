@@ -14,9 +14,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -29,10 +32,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Icon
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import android.provider.Settings
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.snap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.minimumInteractiveComponentSize
 import com.rudra.designsystem.components.CategoryChip
 import com.rudra.designsystem.components.EmptyState
 import com.rudra.designsystem.components.LoadingState
@@ -163,17 +180,21 @@ fun SectionHeader(
     } else {
         title
     }
-
-    Text(
-        text = headerText.uppercase(),
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.primary,
+    Column(
         modifier = Modifier
-            .padding(
-                top = Spacing.lg,
-                bottom = Spacing.sm
-            )
-    )
+            .padding(top = Spacing.lg, bottom = Spacing.sm)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = headerText.uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(Spacing.xs))
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.surfaceVariant
+        )
+    }
 }
 
 
@@ -198,8 +219,15 @@ fun TaskItem(
         SwipeToDismissBox(
             state = dismissState,
             backgroundContent = {
+                val isActive =
+                    dismissState.currentValue != SwipeToDismissBoxValue.Settled ||
+                        dismissState.targetValue != SwipeToDismissBoxValue.Settled
                 val backgroundColor =
-                    MaterialTheme.colorScheme.primaryContainer
+                    if (isActive) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        Color.Transparent
+                    }
                 val contentColor =
                     MaterialTheme.colorScheme.onPrimaryContainer
 
@@ -211,10 +239,20 @@ fun TaskItem(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
+                    Icon(
+                        imageVector = Icons.Outlined.CheckCircle,
+                        contentDescription = null,
+                        tint = contentColor,
+                        modifier = Modifier
+                            .alpha(if (isActive) 1f else 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(Spacing.xs))
                     Text(
                         text = "Complete",
                         color = contentColor,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier
+                            .alpha(if (isActive) 1f else 0.7f)
                     )
                 }
             },
@@ -232,22 +270,54 @@ fun TaskCard(
     task: Task,
     onComplete: (UUID) -> Unit
 ) {
+    val context = LocalContext.current
+    val motionScale = remember(task.id) {
+        Settings.Global.getFloat(
+            context.contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            1f
+        )
+    }
+    val duration = if (motionScale == 0f) 0 else 200
+
+    val animatedAlpha = animateFloatAsState(
+        targetValue = if (task.isCompleted) 0.7f else 1f,
+        animationSpec = if (duration == 0) snap() else tween(duration),
+        label = "taskAlpha"
+    )
+    val animatedScale = animateFloatAsState(
+        targetValue = if (task.isCompleted) 0.985f else 1f,
+        animationSpec = if (duration == 0) snap() else tween(duration),
+        label = "taskScale"
+    )
+    val animatedContainerColor = animateColorAsState(
+        targetValue = if (task.isCompleted) {
+            MaterialTheme.colorScheme.surfaceVariant
+        } else {
+            MaterialTheme.colorScheme.surface
+        },
+        animationSpec = if (duration == 0) snap() else tween(duration),
+        label = "taskContainerColor"
+    )
+
     val completedDateText = task.completedAt?.let {
         it.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors =
-            if (task.isCompleted)
-                CardDefaults.cardColors(
-                    containerColor =
-                        MaterialTheme.colorScheme.surfaceVariant
-                )
-            else CardDefaults.cardColors(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer(
+                scaleX = animatedScale.value,
+                scaleY = animatedScale.value,
+                alpha = animatedAlpha.value
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = animatedContainerColor.value
+        ),
         elevation =
             CardDefaults.cardElevation(
-                defaultElevation = 1.dp
+                defaultElevation = if (task.isCompleted) 0.dp else 1.dp
             )
     ) {
         Row(
@@ -257,6 +327,15 @@ fun TaskCard(
             Checkbox(
                 checked = task.isCompleted,
                 enabled = !task.isCompleted,
+                modifier = Modifier
+                    .minimumInteractiveComponentSize()
+                    .semantics {
+                        contentDescription = if (task.isCompleted) {
+                            "Task completed"
+                        } else {
+                            "Mark task complete"
+                        }
+                    },
                 onCheckedChange = {
                     if (!task.isCompleted) {
                         onComplete(task.id)
@@ -266,7 +345,12 @@ fun TaskCard(
 
             Spacer(modifier = Modifier.width(Spacing.sm))
 
-            Column {
+            val contentAlpha = if (task.isCompleted) 0.7f else 1f
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(contentAlpha)
+            ) {
                 Text(
                     text = task.title,
                     style = MaterialTheme.typography.titleMedium,
@@ -278,27 +362,27 @@ fun TaskCard(
 
                 Spacer(modifier = Modifier.height(Spacing.xs))
 
-                Text(
-                    text = task.frequency.displayText(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color =
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                completedDateText?.let { dateText ->
-                    Spacer(modifier = Modifier.height(Spacing.xs))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = "Completed on $dateText",
-                        style =
-                            MaterialTheme.typography.bodySmall,
+                        text = task.frequency.displayText(),
+                        style = MaterialTheme.typography.bodySmall,
                         color =
                             MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.width(Spacing.sm))
+                    CategoryChip(category = task.category)
                 }
 
-                Spacer(modifier = Modifier.height(Spacing.sm))
-
-                CategoryChip(category = task.category)
+                if (completedDateText != null) {
+                    Spacer(modifier = Modifier.height(Spacing.xs))
+                    Text(
+                        text = "Completed on $completedDateText",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
     }

@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/**
+ * Manages user settings and sync actions.
+ */
 class SettingsViewModel(
     private val userPreferences: UserPreferences,
     private val taskSyncRepository: TaskSyncRepository

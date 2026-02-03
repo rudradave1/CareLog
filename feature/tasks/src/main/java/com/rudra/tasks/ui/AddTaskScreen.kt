@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rudra.common.worker.scheduleReminder
 import com.rudra.designsystem.theme.CareLogScaffold
@@ -19,12 +25,16 @@ import com.rudra.designsystem.theme.CareLogTextField
 import com.rudra.designsystem.theme.PrimaryButton
 import com.rudra.designsystem.theme.Spacing
 import com.rudra.tasks.viewmodel.AddTaskViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material3.Text
 
 @Composable
 fun AddTaskScreen(
     viewModel: AddTaskViewModel,
     remindersEnabled: Boolean,
-    onTaskSaved: () -> Unit
+    onTaskSaved: () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState
         .collectAsStateWithLifecycle()
@@ -48,7 +58,17 @@ fun AddTaskScreen(
         }
     }
 
-    CareLogScaffold(title = "Add Task") {
+    CareLogScaffold(
+        title = "Add Task",
+        navigationIcon = {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.Outlined.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+        }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -60,7 +80,18 @@ fun AddTaskScreen(
                 CareLogTextField(
                     value = uiState.title,
                     label = "Task title",
-                    onValueChange = viewModel::onTitleChange
+                    onValueChange = viewModel::onTitleChange,
+                    supportingText = "Keep it short and actionable.",
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (uiState.title.isNotBlank()) {
+                                viewModel.saveTask()
+                            }
+                        }
+                    )
                 )
 
                 Spacer(modifier = Modifier.height(Spacing.lg))
@@ -68,6 +99,14 @@ fun AddTaskScreen(
                 FrequencySelector(
                     selected = uiState.frequency,
                     onChange = viewModel::onFrequencyChange
+                )
+
+                Spacer(modifier = Modifier.height(Spacing.xs))
+
+                Text(
+                    text = "Start with Daily. You can refine this later.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 

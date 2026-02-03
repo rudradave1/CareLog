@@ -4,6 +4,9 @@ import com.rudra.domain.Task
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
+/**
+ * Room-backed task data access for the app.
+ */
 interface TaskRepository {
 
     fun observeTasks(): Flow<List<Task>>

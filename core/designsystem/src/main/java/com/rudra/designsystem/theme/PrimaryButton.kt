@@ -1,7 +1,6 @@
 package com.rudra.designsystem.theme
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +18,8 @@ fun PrimaryButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(52.dp),
-        shape = RoundedCornerShape(12.dp)
+        modifier = modifier.defaultMinSize(minHeight = 52.dp),
+        shape = MaterialTheme.shapes.medium
     ) {
         Text(
             text = text,

@@ -11,11 +11,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rudra.designsystem.theme.PrimaryButton
+import com.rudra.designsystem.theme.LocalSnackbarHostState
 import com.rudra.designsystem.theme.Spacing
 import com.rudra.settings.viewmodel.SettingsViewModel
 import java.time.Instant
@@ -32,6 +37,22 @@ fun SettingsScreen(
     val pendingCount by viewModel.pendingCount.collectAsStateWithLifecycle()
     val syncing by viewModel.syncing.collectAsStateWithLifecycle()
     val syncError by viewModel.syncError.collectAsStateWithLifecycle()
+    val snackbarHostState = LocalSnackbarHostState.current
+    var wasSyncing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(syncing, syncError) {
+        if (syncing && !wasSyncing) {
+            snackbarHostState.showSnackbar(
+                message = "Sync started"
+            )
+        }
+        if (!syncing && wasSyncing && syncError == null) {
+            snackbarHostState.showSnackbar(
+                message = "Sync complete"
+            )
+        }
+        wasSyncing = syncing
+    }
 
     Column(
         modifier = Modifier
@@ -46,7 +67,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(Spacing.xs))
 
         Text(
-            text = "Control reminders for your tasks.",
+            text = "Manage task reminders.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -73,9 +94,9 @@ fun SettingsScreen(
 
         Text(
             text = if (remindersEnabled) {
-                "Reminders will be scheduled at your task time."
+                "Reminders are on for each task."
             } else {
-                "Reminders are paused. You can turn them back on anytime."
+                "Reminders are off. Turn them on anytime."
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -91,7 +112,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(Spacing.xs))
 
         Text(
-            text = "Back up tasks and keep your devices aligned.",
+            text = "Back up tasks and keep devices aligned.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

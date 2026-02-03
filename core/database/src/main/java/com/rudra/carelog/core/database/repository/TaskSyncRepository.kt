@@ -12,6 +12,9 @@ sealed class SyncResult {
     ) : SyncResult()
 }
 
+/**
+ * Coordinates sync operations and sync metadata.
+ */
 interface TaskSyncRepository {
 
     val lastSyncTime: Flow<Long?>

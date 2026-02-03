@@ -2,10 +2,13 @@ package com.rudra.designsystem.components
 
 
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.rudra.domain.TaskCategory
 
 @Composable
@@ -21,6 +24,12 @@ fun CategoryChip(
                     .replaceFirstChar { it.uppercase() }
             )
         },
-        modifier = modifier
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        modifier = modifier.semantics {
+            contentDescription = "Category ${category.name.lowercase()}"
+        }
     )
 }

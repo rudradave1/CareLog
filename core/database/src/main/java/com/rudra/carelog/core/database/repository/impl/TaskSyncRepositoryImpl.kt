@@ -15,6 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
+/**
+ * Sync implementation that keeps Room authoritative and resolves conflicts
+ * by favoring the newest updatedAt value.
+ */
 class TaskSyncRepositoryImpl(
     private val taskDao: TaskDao,
     private val syncApi: TaskSyncApi,

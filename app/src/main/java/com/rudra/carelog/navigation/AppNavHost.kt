@@ -2,8 +2,10 @@ package com.rudra.carelog.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -95,6 +97,9 @@ fun AppNavHost(
                 remindersEnabled = remindersEnabled,
                 onTaskSaved = {
                     navController.popBackStack()
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -111,7 +116,17 @@ fun AppNavHost(
                 )
 
             CareLogScaffold(
-                title = "Settings"
+                title = "Settings",
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
             ) {
                 SettingsScreen(viewModel = vm)
             }

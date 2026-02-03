@@ -14,17 +14,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.UUID
+
 private const val KEY_TITLE = "add_task_title"
 
+/**
+ * Handles state and actions for creating a new task.
+ */
 class AddTaskViewModel(
     private val repository: TaskRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    // MVP: Category and frequency are locked to Personal / Daily.
-    // UI selectors will be added in Phase 3.
-    // frequency = TaskFrequency.Daily,
-    // category = TaskCategory.PERSONAL,
-
     private val _uiState =
         MutableStateFlow(
             AddTaskUiState(
@@ -42,9 +41,7 @@ class AddTaskViewModel(
         _uiState.value =
             _uiState.value.copy(title = newTitle)
     }
-    private fun defaultFrequency(): TaskFrequency {
-        return TaskFrequency.Daily
-    }
+
     fun onFrequencyChange(frequency: TaskFrequency) {
         _uiState.value =
             _uiState.value.copy(frequency = frequency)
