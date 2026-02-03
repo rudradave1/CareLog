@@ -45,20 +45,7 @@ The app uses Room as the single source of truth, supports manual and periodic sy
 - **Networking**: Retrofit + Moshi
 - **Sync Strategy**: Offline-first with conflict resolution
 - **Build**: Gradle Version Catalogs, modular setup
-
----
-
-## 🗂️ Project Structure
-
-app/
-core/
-├── database # Room entities, DAO, repository
-├── network # Retrofit sync + fake server
-├── sync # Offline-first sync logic
-feature/
-├── tasks # Task list & add task UI
-├── settings # Sync & preferences UI
-
+ 
 ---
 
 ## 🔄 Sync Model (High Level)
@@ -90,7 +77,8 @@ CareLog is designed to answer one question:
 
 ## 📸 Screenshots
 
-(Add 2–3 screenshots here)
+<img width="1110" height="2220" alt="screen_1" src="https://github.com/user-attachments/assets/40037023-fb64-4ba2-97ab-f9b2c0ab0129" />
+
 
 ---
 
