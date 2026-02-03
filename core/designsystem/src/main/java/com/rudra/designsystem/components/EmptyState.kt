@@ -18,7 +18,8 @@ import com.rudra.designsystem.theme.Spacing
 
 @Composable
 fun EmptyState(
-    message: String
+    message: String,
+    title: String = "You're all clear"
 ) {
     Column(
         modifier = Modifier
@@ -28,7 +29,7 @@ fun EmptyState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "You're all clear 🎉",
+            text = title,
             style = MaterialTheme.typography.titleMedium
         )
 

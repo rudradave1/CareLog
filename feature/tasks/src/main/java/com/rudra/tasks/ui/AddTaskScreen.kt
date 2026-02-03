@@ -73,7 +73,7 @@ fun AddTaskScreen(
 
             PrimaryButton(
                 text = "Save task",
-                enabled = !uiState.isSaving,
+                enabled = uiState.title.isNotBlank() && !uiState.isSaving,
                 onClick = viewModel::saveTask,
                 modifier = Modifier.fillMaxWidth()
             )
